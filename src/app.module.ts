@@ -11,7 +11,8 @@ import { ConfigModule } from '@nestjs/config';
   // Create the Apollo server
   imports: [
     ConfigModule.forRoot({
-
+      isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.test.env',
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -33,4 +34,5 @@ import { ConfigModule } from '@nestjs/config';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {
+}
