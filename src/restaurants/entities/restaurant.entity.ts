@@ -1,16 +1,31 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@ObjectType()
+// cumulate our types
+@ObjectType() // for nestjs/graphql
+@Entity() // for typeorm
 export class Restaurant {
-  @Field(() => String)
+  @Field(() => Number)
+  @PrimaryGeneratedColumn()
+  id: string;
+
+  @Field(() => String) // for nestjs/graphql
+  @Column() // for typeorm
   name: string;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean) // for nestjs/graphql
+  @Column() // for typeorm
   isVegan: boolean;
 
-  @Field(() => String)
+  @Field(() => String) // for nestjs/graphql
+  @Column() // for typeorm
   address: string;
 
-  @Field(() => String)
+  @Field(() => String) // for nestjs/graphql
+  @Column() // for typeorm
   ownerName: string;
+
+  @Field(() => String) // for nestjs/graphql
+  @Column() // for typeorm
+  categoryName: string;
 }
