@@ -34,7 +34,7 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
       database: process.env.DB_NAME,
       // migrate db when orm start
       synchronize: process.env.NODE_ENV === 'dev',
-      logging: true,
+      logging: process.env.NODE_ENV === 'dev',
       entities: [Restaurant],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
