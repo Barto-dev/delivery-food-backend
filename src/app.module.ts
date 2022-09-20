@@ -3,13 +3,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import * as Joi from 'Joi';
 import { join } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { RestaurantsModule } from './restaurants/restaurants.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { Restaurant } from './restaurants/entities/restaurant.entity';
-import { UsersModule } from './users/users.module';
+import { UserModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
-import { User } from './users/enities/user.entity';
+import { User } from './users/enities/users.entity';
 
 // AppModule it's our entry point, like App.tsx in React apps
 @Module({
@@ -44,7 +42,7 @@ import { User } from './users/enities/user.entity';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
-    UsersModule,
+    UserModule,
     CommonModule,
   ],
   controllers: [],
