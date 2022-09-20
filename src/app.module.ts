@@ -8,6 +8,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { UsersModule } from './users/users.module';
+import { CommonModule } from './common/common.module';
+import { User } from './users/enities/user.entity';
 
 // AppModule it's our entry point, like App.tsx in React apps
 @Module({
@@ -36,14 +38,14 @@ import { UsersModule } from './users/users.module';
       // migrate db when orm start
       synchronize: process.env.NODE_ENV === 'dev',
       logging: process.env.NODE_ENV === 'dev',
-      entities: [Restaurant],
+      entities: [User],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
-    RestaurantsModule,
     UsersModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],
