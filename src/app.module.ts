@@ -7,6 +7,7 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { UsersModule } from './users/users.module';
 
 // AppModule it's our entry point, like App.tsx in React apps
 @Module({
@@ -42,6 +43,7 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
     RestaurantsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
