@@ -1,6 +1,7 @@
-import { Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from './enities/users.entity';
 import { UsersService } from './users.service';
+import { CreateAccountInput, CreateAccountOutput } from './dto/create-account.dto';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -10,4 +11,7 @@ export class UsersResolver {
   hi(): boolean {
     return true;
   }
+
+  @Mutation(() => CreateAccountOutput)
+  createAccount(@Args('input') createAccountInput: CreateAccountInput) {}
 }
