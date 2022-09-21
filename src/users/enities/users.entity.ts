@@ -8,6 +8,7 @@ import {
 } from '@nestjs/graphql';
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
+import { IsEmail, IsEnum, IsString } from 'class-validator';
 
 enum UserRole {
   Owner,
@@ -23,14 +24,17 @@ registerEnumType(UserRole, { name: 'UserRole' });
 export class User extends CoreEntity {
   @Column()
   @Field(() => String)
+  @IsEmail()
   email: string;
 
   @Column()
   @Field(() => String)
+  @IsString()
   password: string;
 
   @Column({ type: 'enum', enum: UserRole })
   @Field(() => UserRole)
+  @IsEnum(UserRole)
   role: UserRole;
 
   // trigger before password save in db
