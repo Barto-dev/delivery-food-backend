@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { User } from './users/enities/users.entity';
+import { JwtModule } from './jwt/jwt.module';
 
 // AppModule it's our entry point, like App.tsx in React apps
 @Module({
@@ -24,6 +25,7 @@ import { User } from './users/enities/users.entity';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+        TOKEN_SECRET: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -44,6 +46,7 @@ import { User } from './users/enities/users.entity';
     }),
     UserModule,
     CommonModule,
+    JwtModule,
   ],
   controllers: [],
   providers: [],
