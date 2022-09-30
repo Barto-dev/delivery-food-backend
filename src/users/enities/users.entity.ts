@@ -1,11 +1,6 @@
 import { BeforeInsert, Column, Entity } from 'typeorm';
 import { CoreEntity } from '../../common/entities/core.entity';
-import {
-  Field,
-  InputType,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
+import { Field, InputType, ObjectType, registerEnumType, } from '@nestjs/graphql';
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
 import { IsEmail, IsEnum, IsString } from 'class-validator';
@@ -42,6 +37,16 @@ export class User extends CoreEntity {
   async hashPassword() {
     try {
       this.password = await bcrypt.hash(this.password, 10);
+    } catch (e) {
+      console.error(e);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async checkPassword(aPassword: string): Promise<boolean> {
+    try {
+      // compare is this password equals
+      return await bcrypt.compare(aPassword, this.password);
     } catch (e) {
       console.error(e);
       throw new InternalServerErrorException();

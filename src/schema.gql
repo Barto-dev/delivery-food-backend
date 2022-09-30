@@ -10,11 +10,11 @@ type CreateAccountOutput {
 type LoginOutput {
   error: String
   ok: Boolean!
-  token: String!
+  token: String
 }
 
 type Query {
-  hi: Boolean!
+  sayHello: String!
 }
 
 type Mutation {

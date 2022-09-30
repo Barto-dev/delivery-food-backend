@@ -11,9 +11,9 @@ import { LoginInput, LoginOutput } from './dto/login.dto';
 export class UsersResolver {
   constructor(private readonly userService: UsersService) {}
 
-  @Query(() => Boolean)
-  hi(): boolean {
-    return true;
+  @Query(() => String)
+  sayHello(): string {
+    return 'Hello World!';
   }
 
   @Mutation(() => CreateAccountOutput)
@@ -36,6 +36,14 @@ export class UsersResolver {
 
   @Mutation(() => LoginOutput)
   async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
-    return { ok: false, token: '' };
+    try {
+      const { ok, error, token } = await this.userService.login(loginInput);
+      return { ok, error, token };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
+    }
   }
 }
