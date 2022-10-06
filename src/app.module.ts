@@ -15,6 +15,7 @@ import { JwtModule } from './jwt/jwt.module';
   // Create the Apollo server
   imports: [
     ConfigModule.forRoot({
+      // we don't need to import this service in each module because it is a global
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.test.env',
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
@@ -46,7 +47,7 @@ import { JwtModule } from './jwt/jwt.module';
     }),
     UserModule,
     CommonModule,
-    JwtModule,
+    JwtModule.forRoot(),
   ],
   controllers: [],
   providers: [],
