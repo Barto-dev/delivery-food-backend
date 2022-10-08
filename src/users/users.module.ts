@@ -9,5 +9,6 @@ import { UsersService } from './users.service';
   // ConfigService and JwtService is global module
   // providers: [UsersResolver, UsersService, ConfigService, JwtService],
   providers: [UsersResolver, UsersService],
+  exports: [UsersService],
 })
 export class UserModule {}
