@@ -8,6 +8,7 @@ import {
 import { LoginInput, LoginOutput } from './dto/login.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
+import { AuthUser } from '../auth/auth-user.decorator';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -17,11 +18,8 @@ export class UsersResolver {
   @UseGuards(AuthGuard)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  me(@Context context) {
-    if (!context.user) {
-      return;
-    }
-    return context.user;
+  me(@AuthUser() authUser: User) {
+    return authUser;
   }
 
   @Mutation(() => CreateAccountOutput)
