@@ -20,6 +20,7 @@ export class JwtMiddleware implements NestMiddleware {
       if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
         try {
           const user = await this.userService.findById(decoded['id']);
+          // set user in all users request and send in to ApolloServer(context)
           req['user'] = user;
         } catch (e) {
           console.error(e);
