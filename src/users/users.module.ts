@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './enities/users.entity';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
-import { JwtService } from '../jwt/jwt.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],

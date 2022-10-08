@@ -12,8 +12,7 @@ import { JwtService } from '../jwt/jwt.service';
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
-    // ConfigService is global module
-    private readonly config: ConfigService,
+    // JwtService is a global module
     private readonly jwtService: JwtService,
   ) {}
 
@@ -68,7 +67,7 @@ export class UsersService {
         };
       }
       // added secret key to avoid token forger
-      const token = jwt.sign({ id: user.id }, this.config.get('TOKEN_SECRET'));
+      const token = this.jwtService.sign({ id: user.id });
       return {
         ok: true,
         token,
