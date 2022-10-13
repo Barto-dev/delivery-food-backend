@@ -51,6 +51,7 @@ import { AuthModule } from './auth/auth.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      // 2nd step where we set user
       context: ({ req }) => ({ user: req['user'] }),
     }),
     UserModule,

@@ -13,11 +13,9 @@ import { AuthUser } from '../auth/auth-user.decorator';
 @Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly userService: UsersService) {}
-
+  // 3rd step where we check user
   @Query(() => User)
   @UseGuards(AuthGuard)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   me(@AuthUser() authUser: User) {
     return authUser;
   }

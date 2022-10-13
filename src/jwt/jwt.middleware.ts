@@ -12,7 +12,9 @@ export class JwtMiddleware implements NestMiddleware {
     private readonly jwtService: JwtService,
     private readonly userService: UsersService,
   ) {}
+
   async use(req: Request, res: Response, next: NextFunction) {
+    // 1st step where we check user
     if ('x-jwt' in req.headers) {
       const token = req.headers['x-jwt'];
       const decoded = this.jwtService.verify(token.toString());
@@ -22,9 +24,9 @@ export class JwtMiddleware implements NestMiddleware {
           const user = await this.userService.findById(decoded['id']);
           // set user in all users request and send in to ApolloServer(context)
           req['user'] = user;
-        } catch (e) {
-          console.error(e);
         }
+      } catch (e) {
+        console.error(e);
       }
     }
     next();
