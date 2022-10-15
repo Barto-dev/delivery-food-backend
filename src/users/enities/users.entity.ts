@@ -1,6 +1,11 @@
-import { BeforeInsert, Column, Entity } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
 import { CoreEntity } from '../../common/entities/core.entity';
-import { Field, InputType, ObjectType, registerEnumType, } from '@nestjs/graphql';
+import {
+  Field,
+  InputType,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
 import { IsEmail, IsEnum, IsString } from 'class-validator';
@@ -32,8 +37,9 @@ export class User extends CoreEntity {
   @IsEnum(UserRole)
   role: UserRole;
 
-  // trigger before password save in db
+  // trigger before password save or update in db
   @BeforeInsert()
+  @BeforeUpdate()
   async hashPassword() {
     try {
       this.password = await bcrypt.hash(this.password, 10);

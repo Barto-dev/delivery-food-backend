@@ -7,6 +7,7 @@ import { CreateAccountInput } from './dto/create-account.dto';
 import { LoginInput } from './dto/login.dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '../jwt/jwt.service';
+import { EditProfileInput } from './dto/edit-profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -83,5 +84,12 @@ export class UsersService {
 
   async findById(id: number): Promise<User> {
     return this.users.findOneBy({ id });
+  }
+
+  async editProfile(userId: number, editProfileInput: EditProfileInput) {
+    // we do not check if user exist because this method run only in protected mutation,
+    // and we will extract id from token
+    // update work faster than another method
+    return this.users.update(userId, { ...editProfileInput });
   }
 }

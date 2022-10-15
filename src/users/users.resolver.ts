@@ -10,6 +10,7 @@ import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthUser } from '../auth/auth-user.decorator';
 import { UserProfileInput, UserProfileOutput } from './dto/user-profile.dto';
+import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -70,6 +71,26 @@ export class UsersResolver {
     try {
       const { ok, error, token } = await this.userService.login(loginInput);
       return { ok, error, token };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Mutation(() => EditProfileOutput)
+  async editProfile(
+    @AuthUser() authUser: User,
+    @Args('input') editProfileInput: EditProfileInput,
+  ): Promise<EditProfileOutput> {
+    try {
+      await this.userService.editProfile(authUser.id, editProfileInput);
+      return {
+        ok: true,
+        error: null,
+      };
     } catch (error) {
       return {
         ok: false,
