@@ -11,11 +11,10 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './users/users.module';
-import { CommonModule } from './common/common.module';
 import { User } from './users/enities/users.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
-import { AuthModule } from './auth/auth.module';
+import { Verification } from './users/enities/verification.entity';
 
 // AppModule it's our entry point, like App.tsx in React apps
 @Module({
@@ -46,7 +45,7 @@ import { AuthModule } from './auth/auth.module';
       // migrate db when orm start
       synchronize: process.env.NODE_ENV === 'dev',
       logging: process.env.NODE_ENV === 'dev',
-      entities: [User],
+      entities: [User, Verification],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
