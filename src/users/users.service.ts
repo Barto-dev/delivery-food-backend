@@ -86,10 +86,18 @@ export class UsersService {
     return this.users.findOneBy({ id });
   }
 
-  async editProfile(userId: number, editProfileInput: EditProfileInput) {
-    // we do not check if user exist because this method run only in protected mutation,
-    // and we will extract id from token
-    // update work faster than another method
-    return this.users.update(userId, { ...editProfileInput });
+  async editProfile(
+    userId: number,
+    { email, password }: EditProfileInput,
+  ): Promise<User> {
+    const user = await this.users.findOneBy({ id: userId });
+    if (email) {
+      user.email = email;
+    }
+    if (password) {
+      user.password = password;
+    }
+    // we use save instead update just to use hook @BeforeUpdate() when user edit their profile
+    return this.users.save(user);
   }
 }
