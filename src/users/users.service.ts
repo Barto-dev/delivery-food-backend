@@ -5,14 +5,16 @@ import * as jwt from 'jsonwebtoken';
 import { Injectable } from '@nestjs/common';
 import { CreateAccountInput } from './dto/create-account.dto';
 import { LoginInput } from './dto/login.dto';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '../jwt/jwt.service';
 import { EditProfileInput } from './dto/edit-profile.dto';
+import { Verification } from './enities/verification.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(Verification)
+    private readonly verifications: Repository<Verification>,
     // JwtService is a global module
     private readonly jwtService: JwtService,
   ) {}
@@ -33,9 +35,10 @@ export class UsersService {
       }
       const newUser = await this.users.create({ email, password, role });
       await this.users.save(newUser);
-      return {
-        ok: true,
-      };
+      await this.verifications.save(
+        this.verifications.create({ user: newUser }),
+      );
+      return { ok: true };
     } catch (e) {
       // make error
       return {
@@ -93,11 +96,25 @@ export class UsersService {
     const user = await this.users.findOneBy({ id: userId });
     if (email) {
       user.email = email;
+      user.verified = false;
+      await this.verifications.save(this.verifications.create({ user }));
     }
     if (password) {
       user.password = password;
     }
     // we use save instead update just to use hook @BeforeUpdate() when user edit their profile
     return this.users.save(user);
+  }
+
+  async verifyEmail(code: string): Promise<boolean> {
+    const verification = await this.verifications.findOne({
+      where: { code },
+      relations: ['user'],
+    });
+    if (verification) {
+      verification.user.verified = true;
+      await this.users.save(verification.user);
+    }
+    return false;
   }
 }

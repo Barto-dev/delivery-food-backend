@@ -11,6 +11,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { AuthUser } from '../auth/auth-user.decorator';
 import { UserProfileInput, UserProfileOutput } from './dto/user-profile.dto';
 import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
+import { VerifyEmailInput, VerifyEmailOutput } from './dto/verify-email.dto';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -18,7 +19,7 @@ export class UsersResolver {
   // 3rd step where we check user
   @Query(() => User)
   @UseGuards(AuthGuard)
-  me(@AuthUser() authUser: User) {
+  me(@AuthUser() authUser: User): User {
     return authUser;
   }
 
@@ -97,5 +98,14 @@ export class UsersResolver {
         error,
       };
     }
+  }
+
+  @Mutation(() => VerifyEmailOutput)
+  async verifyEmail(@Args('input') verifyEmailInput: VerifyEmailInput) {
+    await this.userService.verifyEmail(verifyEmailInput.code);
+    return {
+      ok: false,
+      error: 'wq',
+    };
   }
 }
