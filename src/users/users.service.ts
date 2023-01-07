@@ -1,13 +1,17 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './enities/users.entity';
 import { Repository } from 'typeorm';
-import * as jwt from 'jsonwebtoken';
 import { Injectable } from '@nestjs/common';
-import { CreateAccountInput } from './dto/create-account.dto';
-import { LoginInput } from './dto/login.dto';
+import {
+  CreateAccountInput,
+  CreateAccountOutput,
+} from './dto/create-account.dto';
+import { LoginInput, LoginOutput } from './dto/login.dto';
 import { JwtService } from '../jwt/jwt.service';
-import { EditProfileInput } from './dto/edit-profile.dto';
+import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
 import { Verification } from './enities/verification.entity';
+import { VerifyEmailOutput } from './dto/verify-email.dto';
+import { UserProfileOutput } from './dto/user-profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -21,13 +25,12 @@ export class UsersService {
 
   async createAccount(
     createAccountInput: CreateAccountInput,
-  ): Promise<{ ok: boolean; error?: string }> {
+  ): Promise<CreateAccountOutput> {
     const { email, password, role } = createAccountInput;
     // check new user exist
     try {
       const userExist = await this.users.findOneBy({ email });
       if (userExist) {
-        // make error
         return {
           ok: false,
           error: 'There is a user with that email already',
@@ -40,18 +43,14 @@ export class UsersService {
       );
       return { ok: true };
     } catch (e) {
-      // make error
       return {
         ok: false,
         error: "Couldn't create account",
       };
     }
-    // create user & hash the password
   }
 
-  async login(
-    loginInput: LoginInput,
-  ): Promise<{ ok: boolean; error?: string; token?: string }> {
+  async login(loginInput: LoginInput): Promise<LoginOutput> {
     const { email, password } = loginInput;
     // find the user with email
     try {
@@ -74,6 +73,7 @@ export class UsersService {
         };
       }
       // added secret key to avoid token forger
+      // make a JWT and give it to the user
       const token = this.jwtService.sign({ id: user.id });
       return {
         ok: true,
@@ -85,31 +85,43 @@ export class UsersService {
         error,
       };
     }
-    // make a JWT and give it to the user
   }
 
-  async findById(id: number): Promise<User> {
-    return this.users.findOneBy({ id });
+  async findById(id: number): Promise<UserProfileOutput> {
+    try {
+      const user = await this.users.findOneBy({ id });
+      if (user) {
+        return { ok: true, user };
+      }
+      return { ok: false, error: 'User not found' };
+    } catch (e) {
+      return { ok: false, error: 'User not found' };
+    }
   }
 
   async editProfile(
     userId: number,
     { email, password }: EditProfileInput,
-  ): Promise<User> {
-    const user = await this.users.findOneBy({ id: userId });
-    if (email) {
-      user.email = email;
-      user.verified = false;
-      await this.verifications.save(this.verifications.create({ user }));
+  ): Promise<EditProfileOutput> {
+    try {
+      const user = await this.users.findOneBy({ id: userId });
+      if (email) {
+        user.email = email;
+        user.verified = false;
+        await this.verifications.save(this.verifications.create({ user }));
+      }
+      if (password) {
+        user.password = password;
+      }
+      // we use save instead update just to use hook @BeforeUpdate() when user edit their profile
+      await this.users.save(user);
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: 'Could not update profile' };
     }
-    if (password) {
-      user.password = password;
-    }
-    // we use save instead update just to use hook @BeforeUpdate() when user edit their profile
-    return this.users.save(user);
   }
 
-  async verifyEmail(code: string): Promise<boolean> {
+  async verifyEmail(code: string): Promise<VerifyEmailOutput> {
     try {
       const verification = await this.verifications.findOne({
         where: { code },
@@ -118,12 +130,11 @@ export class UsersService {
       if (verification) {
         verification.user.verified = true;
         await this.users.save(verification.user);
-        return true;
+        return { ok: true };
       }
-      return false;
-    } catch (err) {
-      console.log(err);
-      return false;
+      return { ok: false, error: 'Verification not found' };
+    } catch (error) {
+      return { ok: false, error };
     }
   }
 }
