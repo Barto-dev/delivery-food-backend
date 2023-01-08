@@ -27,7 +27,7 @@ export class MailService {
     form.append('template', template);
     emailVars.forEach((emailVar) => {
       if (emailVar) {
-        form.append(emailVar.key, emailVar.value);
+        form.append(`v:${emailVar.key}`, emailVar.value);
       }
     });
     const options = {
