@@ -16,11 +16,14 @@ import { VerifyEmailInput, VerifyEmailOutput } from './dto/verify-email.dto';
 @Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly userService: UsersService) {}
+
   // 3rd step where we check user
   @Query(() => User)
   @UseGuards(AuthGuard)
-  me(@AuthUser() authUser: User): User {
-    return authUser;
+  me(@AuthUser() authUser: UserProfileOutput): User {
+    if (authUser.user) {
+      return authUser.user;
+    }
   }
 
   @UseGuards(AuthGuard)
